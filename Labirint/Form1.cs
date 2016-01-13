@@ -20,6 +20,10 @@ namespace Labirint
          
 
         }
+         private void MoveToStart()
+        {
+         
+       }
 
 
     }
