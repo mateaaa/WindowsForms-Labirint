@@ -17,18 +17,10 @@ namespace Labirint
 
 
             InitializeComponent();
-            MoveToStart();
-
-        }
-
-
-        /// <summary>
-        /// Play a sound, then move the mouse pointer to a point 10 pixels down and to 
-        /// the right of the starting point in the upper-left corner of the maze.
-        /// </summary>
-        private void MoveToStart()
-        {
          
+
         }
+
+
     }
 }
