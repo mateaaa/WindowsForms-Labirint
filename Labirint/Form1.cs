@@ -25,6 +25,13 @@ namespace Labirint
          
        }
 
-
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (radioButton1.Checked) //Level 1
+            {
+                FormLevel L1 = new FormLevel();
+                L1.Show();
+            }
+        }
     }
 }
