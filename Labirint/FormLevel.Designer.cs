@@ -42,6 +42,9 @@
             this.pictureBox1.Size = new System.Drawing.Size(284, 261);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
+            this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.FormLevel_MouseDown);
+            this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.FormLevel_MouseUp);
+            this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FormLevel_MouseMove);
             // 
             // timer1
             // 
@@ -59,6 +62,7 @@
             this.Text = "FormLevel";
             this.Load += new System.EventHandler(this.FormLevel_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormLevel_KeyDown);
+            
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
