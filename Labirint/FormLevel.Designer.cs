@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.timer2 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -49,6 +50,12 @@
             this.timer1.Interval = 1;
             this.timer1.Tick += new System.EventHandler(this.drawPoint);
             // 
+            // timer2
+            // 
+            this.timer2.Enabled = true;
+            this.timer2.Interval = 20;
+            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            // 
             // FormLevel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -58,6 +65,7 @@
             this.Name = "FormLevel";
             this.Text = "FormLevel";
             this.Load += new System.EventHandler(this.FormLevel_Load);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.FormLevel_Paint);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormLevel_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
@@ -68,5 +76,6 @@
 
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Timer timer2;
     }
 }

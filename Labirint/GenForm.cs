@@ -20,11 +20,11 @@ namespace Labirint
         /// <returns></returns>
         public int[,] generateMaze(int sizeMX, int sizeMY, int sizeRX, int sizeRY)
         {
-            width = sizeMX / sizeRX;
-            height = sizeMY / sizeRY;
+            width = sizeMX /sizeRX;
+            height = sizeMY/sizeRY;
             mCells = new int[width, height];
-
-            /*Random rand = new Random();
+            /*
+            Random rand = new Random();
             // r for row、c for column
             // Generate random r
             int r = rand.Next(height);
@@ -32,12 +32,12 @@ namespace Labirint
             {
                 r = rand.Next(height);
             }
-            // Generate random c
+             //Generate random c
             int c = rand.Next(width);
             while (c % 2 == 0)
             {
                 c = rand.Next(width);
-            }*/
+            } */
             int r = 0;
             int c = 0;
 

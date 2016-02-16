@@ -19,6 +19,7 @@ namespace Labirint
         bool useM;
 
         Graphics lab;
+        Graphics nacrtanPlijen;
 
         public FormLevel(bool useMouse)
         {
@@ -29,13 +30,13 @@ namespace Labirint
             y = 0;
         }
 
-        int mazeWidth;
-        int mazeHeight;
+        static int mazeWidth;
+        static int mazeHeight;
         int[,] mazeCells;
         int mazeX=0;
         int mazeY=0;
 
-        private void FormLevel_Load(object sender, EventArgs e)
+        private void FormLevel_Load(object sender,EventArgs e)
         {
             mazeWidth = 500;
             mazeHeight = 500;
@@ -51,8 +52,7 @@ namespace Labirint
             //nacrtaj labirint
             if (pictureBox1.Image == null)
             {
-                pictureBox1.Image = new Bitmap(pictureBox1.Width,
-                        pictureBox1.Height);
+                pictureBox1.Image = new Bitmap(pictureBox1.Width,pictureBox1.Height);
             }
 
             lab = Graphics.FromImage(pictureBox1.Image);
@@ -66,13 +66,25 @@ namespace Labirint
                         Rectangle rect = new Rectangle(i, j, rWidth, rHeight);
                         lab.FillRectangle(Brushes.BlueViolet, rect);
                     }
+                    
                     j += rHeight;
                 }
 
                 i += rWidth;
             }
 
-            pictureBox1.Invalidate();
+            //nacrtaj plijen
+            Random rand = new Random();
+            for (int i = 3; i < 10; i++)
+            {
+                Plijen.sviPlijenovi.Add(new Plijen(10,10, rand));
+                Rectangle rect = new Rectangle(10, 10,  20, 20);
+                lab.FillRectangle(Brushes.Red, rect);
+            
+            }
+
+
+                pictureBox1.Invalidate();
 
         }
 
@@ -125,6 +137,33 @@ namespace Labirint
                 }                
             }
             
+        }
+
+        Rectangle granica = new Rectangle(0,0, 25, 25);
+        Pen pen = new Pen(new SolidBrush(Color.Red));
+
+        private void FormLevel_Paint(object sender, PaintEventArgs e)
+        {
+            e.Graphics.DrawRectangle(pen,granica);
+            foreach (Plijen p in Plijen.sviPlijenovi)
+            {
+                p.nacrtajPlijen(e.Graphics);
+
+              
+            }
+        }
+
+        
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            foreach (Plijen p in Plijen.sviPlijenovi)
+            {
+                p.promijeniMjesto();
+              
+            }
+
+
+            this.Invalidate();
         }
     }
 }
