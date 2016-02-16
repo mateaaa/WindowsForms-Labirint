@@ -16,6 +16,9 @@ namespace Labirint
         private int x;
         private int y;
 
+
+        private System.Windows.Forms.Timer t;
+
         bool useM;
         bool dragging;
         Point mouseDownPoint;
@@ -38,6 +41,8 @@ namespace Labirint
         int[,] mazeCells;
         int mazeX=0;
         int mazeY=0;
+        int finishX;
+        int finishY;
 
         private void FormLevel_Load(object sender,EventArgs e)
         {
@@ -76,8 +81,19 @@ namespace Labirint
                 i += rWidth;
             }
 
-            //stvori(generiraj) plijenove
+
+
+            //nacrtaj kraj
+            finishX = mazeWidth - 2 * rWidth;
+            finishY = mazeHeight - 2 * rHeight;
+            Rectangle finish = new Rectangle(finishX, finishY, rWidth, rHeight);
+            lab.FillRectangle(Brushes.LimeGreen, finish);
+
+            t = new Timer();
           
+            t.Start();
+            //stvori(generiraj) plijenove
+
             for (int k = 0; k < 200; k++)
             {
                 for (int i = 100; i < mazeWidth ; )
@@ -101,7 +117,7 @@ namespace Labirint
 
           
 
-                pictureBox1.Invalidate();
+            pictureBox1.Invalidate();
 
         }
 
@@ -188,9 +204,12 @@ namespace Labirint
                         mazeY++;
                         mazeCells[mazeX, mazeY] = 2;
                     }
-                }                
+                }
+                              
             }
+            
         }
+
 
         private void FormLevel_MouseDown(object sender, MouseEventArgs e)
         {
@@ -309,16 +328,33 @@ namespace Labirint
         
         private void timer2_Tick(object sender, EventArgs e)
         {
+            /* //premijestiti plijen
             foreach (Plijen p in Plijen.sviPlijenovi)
             {
                 if(p.skupljen == false)
                     p.promijeniMjesto(mazeCells,mazeWidth,mazeHeight);
-
+                Plijen.sviPlijenovi.Remove(p);
             }
 
-                pictureBox1.Invalidate();
+            foreach (Plijen p in Plijen.sviPlijenovi)
+            {
+                if (p.skupljen == false)
+                p.ukloni = 1;
+                Plijen.sviPlijenovi.Remove(p);
+            }*/
 
-            
+            //ili ukloniti plijen 
+
+            for (int i = 0; i < Plijen.sviPlijenovi.Count; i++ )
+            {
+                Plijen p = Plijen.sviPlijenovi[i];
+                if (p.ukloni == 1)
+                   Plijen.sviPlijenovi.Remove(p);
+               
+            }
+
+
+            pictureBox1.Invalidate();  
 
             this.Invalidate();
         }

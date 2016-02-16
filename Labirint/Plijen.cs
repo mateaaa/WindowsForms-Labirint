@@ -13,6 +13,7 @@ namespace Labirint
 
         public bool skupljen = false;
         public Rectangle pravokutnik;
+        public int ukloni = 1;
 
         public int x, y, sirinaPlijena = 25, visinaPlijena = 25;
 
@@ -28,7 +29,7 @@ namespace Labirint
             
         }
 
-    
+
         public void promijeniMjesto(int[,] mazeCells, int mazeWidth, int mazeHeight)
         {
            
