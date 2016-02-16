@@ -15,8 +15,10 @@ namespace Labirint
     {             
         private int x;
         private int y;
-        
+
         bool useM;
+        bool dragging;
+        Point mouseDownPoint;
 
         Graphics lab;
         Graphics nacrtanPlijen;
@@ -28,6 +30,7 @@ namespace Labirint
 
             x = 0;
             y = 0;
+            dragging = false;
         }
 
         static int mazeWidth;
@@ -63,7 +66,7 @@ namespace Labirint
                 {
                     if (mazeCells[i / rWidth, j / rHeight] == 0)
                     {
-                        Rectangle rect = new Rectangle(i, j, rWidth, rHeight);
+                        Rectangle rect = new Rectangle(i , j , rWidth, rHeight);
                         lab.FillRectangle(Brushes.BlueViolet, rect);
                     }
                     
@@ -73,82 +76,232 @@ namespace Labirint
                 i += rWidth;
             }
 
-            //nacrtaj plijen
-            Random rand = new Random();
-            for (int i = 3; i < 10; i++)
+            //stvori(generiraj) plijenove
+          
+            for (int k = 0; k < 200; k++)
             {
-                Plijen.sviPlijenovi.Add(new Plijen(10,10, rand));
-                Rectangle rect = new Rectangle(10, 10,  20, 20);
-                lab.FillRectangle(Brushes.Red, rect);
-            
+                for (int i = 100; i < mazeWidth ; )
+                {
+                    for (int j = 100; j < mazeHeight ; )
+                    {
+                        if (mazeCells[i / rWidth, j / rHeight] == 1)
+                        {
+                            Plijen.sviPlijenovi.Add(new Plijen(i, j, 25, 25));
+                        }
+
+                        j += rHeight*5;
+                    }
+
+                    i += rWidth*5;
+
+
+                }
             }
 
+
+          
 
                 pictureBox1.Invalidate();
 
         }
 
         public void drawPoint(object sender, EventArgs e) {
+
             Rectangle rect = new Rectangle(x, y, 25, 25);
             lab.FillRectangle(Brushes.Green, rect);
-            
+            mazeCells[0, 0] = 2;
+         
+
             pictureBox1.Invalidate();            
+        }
+
+        public void makeRect()
+        {
+            Rectangle rect = new Rectangle(x, y, 25, 25);
+            lab.FillRectangle(Brushes.Ivory, rect);
         }
 
         private void FormLevel_KeyDown(object sender, KeyEventArgs e)
         {
             if (useM == false)
             {
-                if (e.KeyCode == Keys.Left && mazeX-1>=0)
+                if (e.KeyCode == Keys.Left && mazeX - 1>=0)
                 {
-                    if (mazeCells[mazeX - 1, mazeY] == 1)
+                    if (mazeCells[mazeX - 1, mazeY] == 2)
+                    {
+                        makeRect();
+                        x -= 25;
+                        mazeCells[mazeX, mazeY] = 1;
+                        mazeX--;
+                    }
+                    else if (mazeCells[mazeX - 1, mazeY] == 1)
                     {
                         x -= 25;
                         mazeX--;
-                        mazeCells[mazeX, mazeY] = 0;
+                        mazeCells[mazeX, mazeY] = 2;
                     }
                 }
-                else if (e.KeyCode == Keys.Right && mazeX+1<=19)
+                else if (e.KeyCode == Keys.Right && mazeX + 1<=19)
                 {
+                    if (mazeCells[mazeX + 1, mazeY] == 2)
+                    {
+                        makeRect();
+                        x += 25;
+                        mazeCells[mazeX, mazeY] = 1;
+                        mazeX++;
+                    }
+                    else if (mazeCells[mazeX + 1, mazeY] == 1)
+                    {
+                        x += 25;
+                        mazeX++;
+                        mazeCells[mazeX, mazeY] = 2;
+                    }
+                }
+                else if (e.KeyCode == Keys.Up && mazeY - 1>=0)
+                {
+                    if (mazeCells[mazeX, mazeY - 1] == 2)
+                    {
+                        makeRect();
+                        y -= 25;
+                        mazeCells[mazeX, mazeY] = 1;
+                        mazeY--;
+                    }
+                    else if (mazeCells[mazeX, mazeY - 1] == 1)
+                    {
+                        y -= 25;
+                        mazeY--;
+                        mazeCells[mazeX, mazeY] = 2;
+                    }
+                }
+                else if (e.KeyCode == Keys.Down && mazeY + 1<=19)
+                {
+                    if (mazeCells[mazeX, mazeY + 1] == 2)
+                    {
+                        makeRect();
+                        y += 25;
+                        mazeCells[mazeX, mazeY] = 1;
+                        mazeY++;
+                    }
+                    else if (mazeCells[mazeX, mazeY + 1] == 1)
+                    {
+                        y += 25;
+                        mazeY++;
+                        mazeCells[mazeX, mazeY] = 2;
+                    }
+                }                
+            }
+        }
+
+        private void FormLevel_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (useM == true)
+            {
+                dragging = true;
+                mouseDownPoint = new Point(e.X, e.Y);
+            }
+        }
+
+        private void FormLevel_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (dragging)
+            {
+                if (mouseDownPoint.X - e.X <= x + 20 && e.X < x && mazeX - 1 >= 0)
+                {
+                    if (mazeCells[mazeX - 1, mazeY] == 2)
+                    {
+                        makeRect();
+                        x -= 25;
+                        mazeCells[mazeX, mazeY] = 1;
+                        mazeX--;
+                    }
+                    else if (mazeCells[mazeX - 1, mazeY] == 1)
+                    {
+                        x -= 25;
+                        mazeX--;
+                        mazeCells[mazeX, mazeY] = 2;
+                    }
+                }
+                else if (e.X - mouseDownPoint.X <= x + 20 && e.X > x + 25 && mazeX + 1 <= 19)
+                {
+                    if (mazeCells[mazeX + 1, mazeY] == 2)
+                    {
+                        makeRect();
+                        x += 25;
+                        mazeCells[mazeX, mazeY] = 1;
+                        mazeX++;
+                    }
                     if (mazeCells[mazeX + 1, mazeY] == 1)
                     {
                         x += 25;
                         mazeX++;
-                        mazeCells[mazeX, mazeY] = 0;
+                        mazeCells[mazeX, mazeY] = 2;
                     }
                 }
-                else if (e.KeyCode == Keys.Up && mazeY-1>=0)
+                else if (mouseDownPoint.Y - e.Y <= y + 20 && e.Y < y && mazeY - 1 >= 0)
                 {
+                    if (mazeCells[mazeX, mazeY - 1] == 2)
+                    {
+                        makeRect();
+                        y -= 25;
+                        mazeCells[mazeX, mazeY] = 1;
+                        mazeY--;
+                    }
                     if (mazeCells[mazeX, mazeY - 1] == 1)
                     {
                         y -= 25;
                         mazeY--;
-                        mazeCells[mazeX, mazeY] = 0;
+                        mazeCells[mazeX, mazeY] = 2;
                     }
                 }
-                else if (e.KeyCode == Keys.Down && mazeY+1<=19)
+                else if (e.Y - mouseDownPoint.Y >= y + 20 && e.Y > y + 25 && mazeY + 1 <= 19)
                 {
+                    if (mazeCells[mazeX, mazeY + 1] == 2)
+                    {
+                        makeRect();
+                        y += 25;
+                        mazeCells[mazeX, mazeY] = 1;
+                        mazeY++;
+                    }
                     if (mazeCells[mazeX, mazeY + 1] == 1)
                     {
                         y += 25;
                         mazeY++;
-                        mazeCells[mazeX, mazeY] = 0;
+                        mazeCells[mazeX, mazeY] = 2;
                     }
-                }                
-            }
-            
+                }
+            }                
         }
 
-        Rectangle granica = new Rectangle(0,0, 25, 25);
-        Pen pen = new Pen(new SolidBrush(Color.Red));
+
+       
 
         private void FormLevel_Paint(object sender, PaintEventArgs e)
         {
-            e.Graphics.DrawRectangle(pen,granica);
+            
             foreach (Plijen p in Plijen.sviPlijenovi)
             {
-                p.nacrtajPlijen(e.Graphics);
 
+                Color Color1 = Color.Crimson;
+                Color Color2 = Color.Yellow;
+                Color Color3 = Color.Blue;
+
+                nacrtanPlijen = Graphics.FromImage(pictureBox1.Image);
+
+                for (int i = 0; i < 200; i = i + 50)
+                {
+
+                    Brush Brush1 = new SolidBrush(Color1);
+                    Brush Brush2 = new SolidBrush(Color2);
+                    Brush Brush3 = new SolidBrush(Color3);
+
+                    nacrtanPlijen.FillRectangle(Brush1, Plijen.sviPlijenovi[i].pravokutnik);
+                    nacrtanPlijen.FillRectangle(Brush2, Plijen.sviPlijenovi[i + 1].pravokutnik);
+                    nacrtanPlijen.FillRectangle(Brush3, Plijen.sviPlijenovi[i + 2].pravokutnik);
+
+
+                }
+
+                pictureBox1.Invalidate();  
               
             }
         }
@@ -158,12 +311,23 @@ namespace Labirint
         {
             foreach (Plijen p in Plijen.sviPlijenovi)
             {
-                p.promijeniMjesto();
-              
+                if(p.skupljen == false)
+                    p.promijeniMjesto(mazeCells,mazeWidth,mazeHeight);
+
             }
 
+                pictureBox1.Invalidate();
+
+            
 
             this.Invalidate();
         }
+
+        private void FormLevel_MouseUp(object sender, MouseEventArgs e)
+        {
+            dragging = false;
+        }
+
+
     }
 }

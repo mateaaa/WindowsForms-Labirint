@@ -43,6 +43,9 @@
             this.pictureBox1.Size = new System.Drawing.Size(284, 261);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
+            this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.FormLevel_MouseDown);
+            this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FormLevel_MouseMove);
+            this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.FormLevel_MouseUp);
             // 
             // timer1
             // 
@@ -53,7 +56,7 @@
             // timer2
             // 
             this.timer2.Enabled = true;
-            this.timer2.Interval = 20;
+            this.timer2.Interval = 50;
             this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
             // 
             // FormLevel

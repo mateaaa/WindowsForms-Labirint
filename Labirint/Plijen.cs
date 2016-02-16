@@ -10,37 +10,48 @@ namespace Labirint
     public class Plijen
     {
         public static List<Plijen> sviPlijenovi = new List<Plijen>();
-        public SolidBrush boja;
 
+        public bool skupljen = false;
         public Rectangle pravokutnik;
 
-        public int x, y, sirinaPlijena, visinaPlijena;
+        public int x, y, sirinaPlijena = 25, visinaPlijena = 25;
 
         
-        public Plijen(int x, int y, Random r)
+        public Plijen(int xos, int yos, int sirina, int velicina )
         {
-
-            visinaPlijena = r.Next(2,20);
-            sirinaPlijena = 10;
-
-            this.x = x;
-            this.y = y;
-
-            boja = new SolidBrush(Color.Red);
+            
+            this.x = xos;
+            this.y = yos;
 
             pravokutnik = new Rectangle(x,y, sirinaPlijena, visinaPlijena);
+         
             
         }
 
-        public void nacrtajPlijen(Graphics g)
+    
+        public void promijeniMjesto(int[,] mazeCells, int mazeWidth, int mazeHeight)
         {
-            g.FillRectangle(boja, pravokutnik);
-        
-        }
-        public void promijeniMjesto()
-        {
-            pravokutnik = new Rectangle(y, x, sirinaPlijena, visinaPlijena);
-          
+           
+
+                for (int i = 0; i < mazeWidth; )
+                {
+                    for (int j = 0; j < mazeHeight; )
+                    {
+                        if (mazeCells[i / 25, j / 25] == 1)
+                        {
+                           this.pravokutnik = new Rectangle(i,j, sirinaPlijena, visinaPlijena);
+                        }
+
+                        j += 25 * 5;
+                    }
+
+                    i += 25 * 5;
+
+
+                }
+
+
+                
         }
 
 
