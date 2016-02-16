@@ -16,6 +16,9 @@ namespace Labirint
         private int x;
         private int y;
 
+
+        private System.Windows.Forms.Timer t;
+
         bool useM;
         bool dragging;
         Point mouseDownPoint;
@@ -76,6 +79,10 @@ namespace Labirint
                 i += rWidth;
             }
 
+
+            t = new Timer();
+          
+            t.Start();
             //stvori(generiraj) plijenove
           
             for (int k = 0; k < 200; k++)
@@ -309,16 +316,33 @@ namespace Labirint
         
         private void timer2_Tick(object sender, EventArgs e)
         {
+            /* //premijestiti plijen
             foreach (Plijen p in Plijen.sviPlijenovi)
             {
                 if(p.skupljen == false)
                     p.promijeniMjesto(mazeCells,mazeWidth,mazeHeight);
-
+                Plijen.sviPlijenovi.Remove(p);
             }
 
-                pictureBox1.Invalidate();
+            foreach (Plijen p in Plijen.sviPlijenovi)
+            {
+                if (p.skupljen == false)
+                p.ukloni = 1;
+                Plijen.sviPlijenovi.Remove(p);
+            }*/
 
-            
+            //ili ukloniti plijen 
+
+            for (int i = 0; i < Plijen.sviPlijenovi.Count; i++ )
+            {
+                Plijen p = Plijen.sviPlijenovi[i];
+                if (p.ukloni == 1)
+                   Plijen.sviPlijenovi.Remove(p);
+               
+            }
+
+
+            pictureBox1.Invalidate();  
 
             this.Invalidate();
         }
