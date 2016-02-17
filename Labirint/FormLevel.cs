@@ -21,7 +21,7 @@ namespace Labirint
         
 
         bool useM;
-        bool simpleM = false;
+        bool useM_free;
         private Point mouseStart;
         private Point mouseEnd;
         Pen pen = new Pen(Color.FromArgb(255, 0, 255, 0), 5);
@@ -34,9 +34,10 @@ namespace Labirint
         Graphics lab;
         Graphics nacrtanPlijen;
 
-        public FormLevel(bool useMouse)
+        public FormLevel(bool useMouse, bool useMouse_free)
         {
             useM = useMouse;
+            useM_free = useMouse_free;
             InitializeComponent();
 
             x = 0;
@@ -216,13 +217,13 @@ namespace Labirint
 
         private void FormLevel_MouseDown(object sender, MouseEventArgs e)
         {
-            if (useM == true)
+            if (useM == true || useM_free == true)
             {
                 dragging = true;
 
                 mouseDownPoint = new Point(e.X, e.Y);
 
-                if (simpleM == false) {
+                if (useM_free == true) {
                     mouseStart = mouseEnd = mouseDownPoint;
                 }
             }
@@ -230,7 +231,7 @@ namespace Labirint
 
         private void FormLevel_MouseMove(object sender, MouseEventArgs e)
         {
-            if (simpleM == true)
+            if (useM == true)
             {
                 simpleMouseMove(e);
             }
