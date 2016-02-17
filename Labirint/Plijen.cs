@@ -12,9 +12,12 @@ namespace Labirint
         public static List<Plijen> sviPlijenovi = new List<Plijen>();
 
         public bool skupljen = false;
-        public Rectangle pravokutnik;
-        public int ukloni = 1;
 
+        public bool paused = false;
+        public Rectangle pravokutnik;
+
+        private System.Timers.Timer pauseTimer = new System.Timers.Timer(5000); //5 sekundi
+       
         public int x, y, sirinaPlijena = 25, visinaPlijena = 25;
 
         
@@ -25,11 +28,23 @@ namespace Labirint
             this.y = yos;
 
             pravokutnik = new Rectangle(x,y, sirinaPlijena, visinaPlijena);
-         
+           // pauseTimer.Elapsed -= pauseTimer_Elapsed;
+           // pauseTimer.Elapsed+= pauseTimer_Elapsed;
             
         }
-
-
+        /*
+        void pauseTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            paused = false;
+            pauseTimer.Enabled = false;
+        }
+        
+        public void pauzirajTimer()
+        {
+           
+            pauseTimer.Enabled = true;
+        
+        }
         public void promijeniMjesto(int[,] mazeCells, int mazeWidth, int mazeHeight)
         {
            
@@ -53,7 +68,9 @@ namespace Labirint
 
 
                 
-        }
+        }*/
+
+       
 
 
     }

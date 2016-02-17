@@ -7,7 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using System.Timers;
+using System.Threading;
 
 namespace Labirint
 {
@@ -16,11 +17,13 @@ namespace Labirint
         private int x;
         private int y;
 
-
-        private System.Windows.Forms.Timer t;
+        static System.Windows.Forms.Timer MyTimer = new System.Windows.Forms.Timer();
+        
 
         bool useM;
         bool dragging;
+        bool paint = true; 
+
         Point mouseDownPoint;
 
         Graphics lab;
@@ -49,6 +52,8 @@ namespace Labirint
             ClientSize = new Size(mazeWidth, mazeHeight);
             int rWidth = 25;
             int rHeight = 25;
+
+           
 
             //generiraj labirint
             GenForm labirint = new GenForm();
@@ -80,12 +85,10 @@ namespace Labirint
             }
 
 
-            t = new Timer();
-          
-            t.Start();
+         
             //stvori(generiraj) plijenove
           
-            for (int k = 0; k < 200; k++)
+            for (int k = 0; k < 20; k++)
             {
                 for (int i = 100; i < mazeWidth ; )
                 {
@@ -105,10 +108,15 @@ namespace Labirint
                 }
             }
 
-
+            
+            MyTimer.Interval = (5000); // 5sec
+            MyTimer.Tick += new EventHandler(timer2_Tick);
+            MyTimer.Enabled = true;
           
-
-                pictureBox1.Invalidate();
+            MyTimer.Start();
+          
+            pictureBox1.Invalidate();
+             
 
         }
 
@@ -284,34 +292,63 @@ namespace Labirint
 
         private void FormLevel_Paint(object sender, PaintEventArgs e)
         {
-            
-            foreach (Plijen p in Plijen.sviPlijenovi)
+            if (paint)
             {
-
-                Color Color1 = Color.Crimson;
-                Color Color2 = Color.Yellow;
-                Color Color3 = Color.Blue;
-
-                nacrtanPlijen = Graphics.FromImage(pictureBox1.Image);
-
-                for (int i = 0; i < 200; i = i + 50)
+                foreach (Plijen p in Plijen.sviPlijenovi)
                 {
 
-                    Brush Brush1 = new SolidBrush(Color1);
-                    Brush Brush2 = new SolidBrush(Color2);
-                    Brush Brush3 = new SolidBrush(Color3);
+                    Color Color1 = Color.Crimson;
+                    Color Color2 = Color.Yellow;
+                    Color Color3 = Color.Blue;
 
-                    nacrtanPlijen.FillRectangle(Brush1, Plijen.sviPlijenovi[i].pravokutnik);
-                    nacrtanPlijen.FillRectangle(Brush2, Plijen.sviPlijenovi[i + 1].pravokutnik);
-                    nacrtanPlijen.FillRectangle(Brush3, Plijen.sviPlijenovi[i + 2].pravokutnik);
+                    nacrtanPlijen = Graphics.FromImage(pictureBox1.Image);
+
+                    for (int i = 0; i < 20; i++)
+                    {
+
+                        Brush Brush1 = new SolidBrush(Color1);
+                        Brush Brush2 = new SolidBrush(Color2);
+                        Brush Brush3 = new SolidBrush(Color3);
+
+                        nacrtanPlijen.FillRectangle(Brush1, Plijen.sviPlijenovi[i].pravokutnik);
+                        nacrtanPlijen.FillRectangle(Brush2, Plijen.sviPlijenovi[i + 1].pravokutnik);
+                        nacrtanPlijen.FillRectangle(Brush3, Plijen.sviPlijenovi[i + 2].pravokutnik);
 
 
+                    }
                 }
 
-                pictureBox1.Invalidate();  
-              
             }
-        }
+            else {
+
+                foreach (Plijen p in Plijen.sviPlijenovi)
+                {
+
+                    Color Color1 = Color.White;
+                 
+
+                    nacrtanPlijen = Graphics.FromImage(pictureBox1.Image);
+
+                    for (int i = 0; i < 20; i++)
+                    {
+
+                        Brush Brush1 = new SolidBrush(Color1);
+                    
+
+                        nacrtanPlijen.FillRectangle(Brush1, Plijen.sviPlijenovi[i].pravokutnik);
+                   
+
+
+                    }
+                }
+                Plijen.sviPlijenovi.Clear();
+              
+            
+            }
+                
+                pictureBox1.Invalidate();
+             
+       }
 
         
         private void timer2_Tick(object sender, EventArgs e)
@@ -332,20 +369,28 @@ namespace Labirint
             }*/
 
             //ili ukloniti plijen 
+           // p.pauzirajTimer();
+            
+           
+             //MessageBox.Show("Maknuli smo plijenove jer nisi na vrijeme ih pokupio!");
+             paint = false;
+             MyTimer.Stop();
+                    
+             //else dodajPlijenove() , generiranje novih
 
-            for (int i = 0; i < Plijen.sviPlijenovi.Count; i++ )
-            {
-                Plijen p = Plijen.sviPlijenovi[i];
-                if (p.ukloni == 1)
-                   Plijen.sviPlijenovi.Remove(p);
-               
-            }
+             this.Invalidate();
 
+           
 
-            pictureBox1.Invalidate();  
-
-            this.Invalidate();
         }
+
+        private static void MyHandler(object e, ElapsedEventArgs args)
+        {
+            //var timer = (Timer)e;
+            //timer.Stop();
+        }
+
+
 
         private void FormLevel_MouseUp(object sender, MouseEventArgs e)
         {
