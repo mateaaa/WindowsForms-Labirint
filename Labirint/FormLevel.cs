@@ -92,11 +92,19 @@ namespace Labirint
             //nacrtaj kraj
             finishX = mazeWidth - 2 * rWidth;
             finishY = mazeHeight - 2 * rHeight;
-            Rectangle finish = new Rectangle(finishX, finishY, rWidth, rHeight);
-            lab.FillRectangle(Brushes.LimeGreen, finish);
-         
+            Label finish = new Label();
+            finish.Location = new Point(finishX, finishY);
+            finish.Visible = true;
+            finish.Text = "Finish";
+            finish.Parent = pictureBox1;
+            finish.Height = rHeight;
+            finish.Width = 2 * rWidth;
+
+            //finish.MouseHover += new EventHandler(finish_MouseHover);
+
+
             //stvori(generiraj) plijenove
-          
+
             for (int k = 0; k < 20; k++)
             {
                 for (int i = 100; i < mazeWidth ; )
@@ -127,6 +135,11 @@ namespace Labirint
             pictureBox1.Invalidate();
              
         }
+
+        /*private void finish_MouseHover(object sender, EventArgs e)
+        {
+            MessageBox.Show("Kraj");
+        }*/
 
         public void drawPoint(object sender, EventArgs e) {
 
