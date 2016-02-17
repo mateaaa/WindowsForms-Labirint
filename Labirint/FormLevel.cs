@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Timers;
 using System.Threading;
+using System.Diagnostics;
 
 namespace Labirint
 {
@@ -17,10 +18,10 @@ namespace Labirint
         private int x;
         private int y;
 
-        static System.Windows.Forms.Timer MyTimer = new System.Windows.Forms.Timer();
-
+        static System.Windows.Forms.Timer MyTimer1 = new System.Windows.Forms.Timer();
+        
         bool useM;
-        bool simpleM = false;
+        bool useM_free;
         private Point mouseStart;
         private Point mouseEnd;
         Pen pen = new Pen(Color.FromArgb(255, 0, 255, 0), 5);
@@ -33,9 +34,10 @@ namespace Labirint
         Graphics lab;
         Graphics nacrtanPlijen;
 
-        public FormLevel(bool useMouse)
+        public FormLevel(bool useMouse, bool useMouse_free)
         {
             useM = useMouse;
+            useM_free = useMouse_free;
             InitializeComponent();
 
             x = 0;
@@ -125,13 +127,23 @@ namespace Labirint
                 }
             }
 
+
+            MyTimer1.Interval = 60000;
+            MyTimer1.Tick += new EventHandler(timer2_Tick);
+            MyTimer1.Enabled = true;
+          
+            MyTimer1.Start();
+            int bodoviTick = 0;
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
             
-            MyTimer.Interval = (5000); // 5sec
-            MyTimer.Tick += new EventHandler(timer2_Tick);
-            MyTimer.Enabled = true;
+            Thread.Sleep(10000);
+            bodoviTick++; 
+            stopWatch.Stop();
+           
+            TimeSpan ts = stopWatch.Elapsed;
           
-            MyTimer.Start();
-          
+       
             pictureBox1.Invalidate();
              
         }
@@ -155,6 +167,17 @@ namespace Labirint
         {
             Rectangle rect = new Rectangle(x, y, 25, 25);
             lab.FillRectangle(Brushes.Ivory, rect);
+
+            foreach(Plijen p in Plijen.sviPlijenovi)
+                if (rect.IntersectsWith(p.pravokutnik)) {
+
+                    Rectangle r = p.pravokutnik;
+                    lab.FillRectangle(Brushes.Ivory, r);
+                    Bodovanje.skupljenPlijen(); 
+                    //MessageBox.Show("Bravo! Imaš jedan bod više!");
+                
+                }
+
         }
 
         //kretanje pomocu tipkovnice
@@ -234,13 +257,13 @@ namespace Labirint
 
         private void FormLevel_MouseDown(object sender, MouseEventArgs e)
         {
-            if (useM == true)
+            if (useM == true || useM_free == true)
             {
                 dragging = true;
 
                 mouseDownPoint = new Point(e.X, e.Y);
 
-                if (simpleM == false) {
+                if (useM_free == true) {
                     mouseStart = mouseEnd = mouseDownPoint;
                 }
             }
@@ -248,7 +271,7 @@ namespace Labirint
 
         private void FormLevel_MouseMove(object sender, MouseEventArgs e)
         {
-            if (simpleM == true)
+            if (useM == true)
             {
                 simpleMouseMove(e);
             }
@@ -481,8 +504,9 @@ namespace Labirint
            
              //MessageBox.Show("Maknuli smo plijenove jer nisi na vrijeme ih pokupio!");
              paint = false;
-             MyTimer.Stop();
-                    
+             
+             MyTimer1.Stop();
+          
              //else dodajPlijenove() , generiranje novih
 
              this.Invalidate();
@@ -490,11 +514,12 @@ namespace Labirint
 
         }
 
+        /*
         private static void MyHandler(object e, ElapsedEventArgs args)
         {
-            //var timer = (Timer)e;
-            //timer.Stop();
-        }
+            var timer = (Timer)e;
+            timer.Stop();
+        }*/
 
     }
 }

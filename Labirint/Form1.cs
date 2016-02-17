@@ -30,7 +30,8 @@ namespace Labirint
             if (radioButton1.Checked) //Level 1
             {
                 bool useMouse = radioButton5.Checked ? true : false;
-                FormLevel L1 = new FormLevel(useMouse);
+                bool useMouse_free = radioButton7.Checked ? true : false;
+                FormLevel L1 = new FormLevel(useMouse, useMouse_free);
                 L1.Show();
             }
         }
