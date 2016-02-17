@@ -20,6 +20,11 @@ namespace Labirint
         static System.Windows.Forms.Timer MyTimer = new System.Windows.Forms.Timer();
 
         bool useM;
+        bool simpleM = false;
+        private Point mouseStart;
+        private Point mouseEnd;
+        Pen pen = new Pen(Color.FromArgb(255, 0, 255, 0), 5);
+
         bool dragging;
         bool paint = true; 
 
@@ -45,16 +50,14 @@ namespace Labirint
         int mazeY=0;
         int finishX;
         int finishY;
+        int rWidth = 25;
+        int rHeight = 25;
 
         private void FormLevel_Load(object sender,EventArgs e)
         {
             mazeWidth = 500;
             mazeHeight = 500;
             ClientSize = new Size(mazeWidth, mazeHeight);
-            int rWidth = 25;
-            int rHeight = 25;
-
-           
 
             //generiraj labirint
             GenForm labirint = new GenForm();
@@ -141,6 +144,7 @@ namespace Labirint
             lab.FillRectangle(Brushes.Ivory, rect);
         }
 
+        //kretanje pomocu tipkovnice
         private void FormLevel_KeyDown(object sender, KeyEventArgs e)
         {
             if (useM == false)
@@ -220,11 +224,89 @@ namespace Labirint
             if (useM == true)
             {
                 dragging = true;
+
                 mouseDownPoint = new Point(e.X, e.Y);
+
+                if (simpleM == false) {
+                    mouseStart = mouseEnd = mouseDownPoint;
+                }
             }
         }
 
         private void FormLevel_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (simpleM == true)
+            {
+                simpleMouseMove(e);
+            }
+            else {
+                freehandMouseMove(e);
+            }
+        }
+        //pomocna funkcija za slobodno kretanje
+        private void again()
+        {
+            dragging = false;
+            int pomocni_x = 0, pomocni_y;
+            for (int k = 0; k < 20; k++)
+            {
+                pomocni_y = 0;
+                for (int l = 0; l < 20; l++)
+                {
+                    if (mazeCells[k, l] == 1 && (k != 0 || l != 0))
+                    {
+                        Rectangle rect = new Rectangle(pomocni_x, pomocni_y, 25, 25);
+                        lab.FillRectangle(Brushes.Ivory, rect);
+                    }
+                    pomocni_y += rHeight;
+                }
+                pomocni_x += rWidth;
+            }
+        }
+        //kretanje pomocu misa - slobodna linija
+        private void freehandMouseMove(MouseEventArgs e)
+        {
+            int i, j;
+            int boxXstart=0, boxXend=0, boxYstart, boxYend;
+            if (dragging && mouseDownPoint.X>0 && mouseDownPoint.X<rWidth && mouseDownPoint.Y>0 && mouseDownPoint.Y<rHeight)
+            {
+                for (i = 0; i < 20; i++)
+                {
+                        boxYstart = 0;
+                        boxYend = 0;
+
+                        boxXstart = boxXend;
+                        boxXend += rWidth;
+                        for (j = 0; j < 20; j++)
+                        {
+                            boxYstart = boxYend;
+                            boxYend += rHeight;
+                            if (mazeCells[i, j] == 1 && boxXstart < e.X && boxXend > e.X && boxYstart < e.Y && boxYend > e.Y)
+                            {
+                                mouseStart = mouseEnd;
+                                mouseEnd = new Point(e.X, e.Y);
+
+                                lab.DrawLine(pen, mouseStart, mouseEnd);
+
+                                this.Invalidate();
+
+                            }
+                            else if (mazeCells[i, j] == 0 && boxXstart <= e.X && boxXend >= e.X && boxYstart <= e.Y && boxYend >= e.Y)
+                            {
+                                again(); 
+                            }
+                            
+                        }
+                }
+                
+            }  
+            else if(dragging == false)
+            {
+                again();
+            }          
+        }
+        //kretanje pomocu misa
+        private void simpleMouseMove(MouseEventArgs e)
         {
             if (dragging)
             {
@@ -253,7 +335,7 @@ namespace Labirint
                         mazeCells[mazeX, mazeY] = 1;
                         mazeX++;
                     }
-                    if (mazeCells[mazeX + 1, mazeY] == 1)
+                    else if (mazeCells[mazeX + 1, mazeY] == 1)
                     {
                         x += 25;
                         mazeX++;
@@ -269,7 +351,7 @@ namespace Labirint
                         mazeCells[mazeX, mazeY] = 1;
                         mazeY--;
                     }
-                    if (mazeCells[mazeX, mazeY - 1] == 1)
+                    else if (mazeCells[mazeX, mazeY - 1] == 1)
                     {
                         y -= 25;
                         mazeY--;
@@ -285,7 +367,7 @@ namespace Labirint
                         mazeCells[mazeX, mazeY] = 1;
                         mazeY++;
                     }
-                    if (mazeCells[mazeX, mazeY + 1] == 1)
+                    else if (mazeCells[mazeX, mazeY + 1] == 1)
                     {
                         y += 25;
                         mazeY++;
@@ -295,8 +377,11 @@ namespace Labirint
             }                
         }
 
+        private void FormLevel_MouseUp(object sender, MouseEventArgs e)
+        {
+            dragging = false;
+        }
 
-       
 
         private void FormLevel_Paint(object sender, PaintEventArgs e)
         {
@@ -397,14 +482,6 @@ namespace Labirint
             //var timer = (Timer)e;
             //timer.Stop();
         }
-
-
-
-        private void FormLevel_MouseUp(object sender, MouseEventArgs e)
-        {
-            dragging = false;
-        }
-
 
     }
 }
