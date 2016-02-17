@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Timers;
 using System.Threading;
+using System.Diagnostics;
 
 namespace Labirint
 {
@@ -17,7 +18,7 @@ namespace Labirint
         private int x;
         private int y;
 
-        static System.Windows.Forms.Timer MyTimer = new System.Windows.Forms.Timer();
+        static System.Windows.Forms.Timer MyTimer1 = new System.Windows.Forms.Timer();
         
 
         bool useM;
@@ -108,13 +109,23 @@ namespace Labirint
                 }
             }
 
+
+            MyTimer1.Interval = 60000;
+            MyTimer1.Tick += new EventHandler(timer2_Tick);
+            MyTimer1.Enabled = true;
+          
+            MyTimer1.Start();
+            int bodoviTick = 0;
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
             
-            MyTimer.Interval = (5000); // 5sec
-            MyTimer.Tick += new EventHandler(timer2_Tick);
-            MyTimer.Enabled = true;
+            Thread.Sleep(10000);
+            bodoviTick++; 
+            stopWatch.Stop();
+           
+            TimeSpan ts = stopWatch.Elapsed;
           
-            MyTimer.Start();
-          
+       
             pictureBox1.Invalidate();
              
 
@@ -134,6 +145,17 @@ namespace Labirint
         {
             Rectangle rect = new Rectangle(x, y, 25, 25);
             lab.FillRectangle(Brushes.Ivory, rect);
+
+            foreach(Plijen p in Plijen.sviPlijenovi)
+                if (rect.IntersectsWith(p.pravokutnik)) {
+
+                    Rectangle r = p.pravokutnik;
+                    lab.FillRectangle(Brushes.Ivory, r);
+                    Bodovanje.skupljenPlijen(); 
+                    //MessageBox.Show("Bravo! Imaš jedan bod više!");
+                
+                }
+
         }
 
         private void FormLevel_KeyDown(object sender, KeyEventArgs e)
@@ -374,8 +396,9 @@ namespace Labirint
            
              //MessageBox.Show("Maknuli smo plijenove jer nisi na vrijeme ih pokupio!");
              paint = false;
-             MyTimer.Stop();
-                    
+             
+             MyTimer1.Stop();
+          
              //else dodajPlijenove() , generiranje novih
 
              this.Invalidate();
@@ -384,11 +407,12 @@ namespace Labirint
 
         }
 
+        /*
         private static void MyHandler(object e, ElapsedEventArgs args)
         {
-            //var timer = (Timer)e;
-            //timer.Stop();
-        }
+            var timer = (Timer)e;
+            timer.Stop();
+        }*/
 
 
 
