@@ -116,6 +116,7 @@ namespace Labirint
                         if (mazeCells[i / rWidth, j / rHeight] == 1)
                         {
                             Plijen.sviPlijenovi.Add(new Plijen(i, j, 25, 25));
+                            mazeCells[i / rWidth, j / rHeight] = 3;
                         }
 
                         j += rHeight*5;
@@ -128,7 +129,7 @@ namespace Labirint
             }
 
 
-            MyTimer1.Interval = 60000;
+            MyTimer1.Interval = 20000;
             MyTimer1.Tick += new EventHandler(timer2_Tick);
             MyTimer1.Enabled = true;
           
@@ -137,7 +138,6 @@ namespace Labirint
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
             
-            Thread.Sleep(10000);
             bodoviTick++; 
             stopWatch.Stop();
            
@@ -168,7 +168,7 @@ namespace Labirint
             Rectangle rect = new Rectangle(x, y, 25, 25);
             lab.FillRectangle(Brushes.Ivory, rect);
 
-            foreach(Plijen p in Plijen.sviPlijenovi)
+            /*foreach(Plijen p in Plijen.sviPlijenovi)
                 if (rect.IntersectsWith(p.pravokutnik)) {
 
                     Rectangle r = p.pravokutnik;
@@ -176,7 +176,7 @@ namespace Labirint
                     Bodovanje.skupljenPlijen(); 
                     //MessageBox.Show("Bravo! Imaš jedan bod više!");
                 
-                }
+                }*/
 
         }
 
@@ -194,9 +194,10 @@ namespace Labirint
                         mazeCells[mazeX, mazeY] = 1;
                         mazeX--;
                     }
-                    else if (mazeCells[mazeX - 1, mazeY] == 1)
+                    else if (mazeCells[mazeX - 1, mazeY] == 1 || mazeCells[mazeX - 1, mazeY] == 3)
                     {
                         x -= 25;
+                        if (mazeCells[mazeX - 1, mazeY] == 3) Bodovanje.skupljenPlijen();
                         mazeX--;
                         mazeCells[mazeX, mazeY] = 2;
                     }
@@ -210,10 +211,13 @@ namespace Labirint
                         mazeCells[mazeX, mazeY] = 1;
                         mazeX++;
                     }
-                    else if (mazeCells[mazeX + 1, mazeY] == 1)
+                    else if (mazeCells[mazeX + 1, mazeY] == 1 || mazeCells[mazeX + 1, mazeY] == 3)
                     {
                         x += 25;
+                        if (mazeCells[mazeX + 1, mazeY] == 3) Bodovanje.skupljenPlijen();
                         mazeX++;
+                        if (mazeX == 18 && mazeY == 18) MessageBox.Show("Bravo! Završio si labirint." + 
+                             " bodovi: " + Bodovanje.broj_bodova.ToString());
                         mazeCells[mazeX, mazeY] = 2;
                     }
                 }
@@ -226,9 +230,10 @@ namespace Labirint
                         mazeCells[mazeX, mazeY] = 1;
                         mazeY--;
                     }
-                    else if (mazeCells[mazeX, mazeY - 1] == 1)
+                    else if (mazeCells[mazeX, mazeY - 1] == 1 || mazeCells[mazeX, mazeY - 1] == 3)
                     {
                         y -= 25;
+                        if (mazeCells[mazeX, mazeY - 1] == 3) Bodovanje.skupljenPlijen();
                         mazeY--;
                         mazeCells[mazeX, mazeY] = 2;
                     }
@@ -242,10 +247,13 @@ namespace Labirint
                         mazeCells[mazeX, mazeY] = 1;
                         mazeY++;
                     }
-                    else if (mazeCells[mazeX, mazeY + 1] == 1)
+                    else if (mazeCells[mazeX, mazeY + 1] == 1 || mazeCells[mazeX, mazeY + 1] == 3)
                     {
                         y += 25;
+                        if (mazeCells[mazeX, mazeY + 1] == 3) Bodovanje.skupljenPlijen();
                         mazeY++;
+                        if (mazeX == 18 && mazeY == 18) MessageBox.Show("Bravo! Završio si labirint." + 
+                            " bodovi: " + Bodovanje.broj_bodova.ToString());
                         mazeCells[mazeX, mazeY] = 2;
                     }
                 }
@@ -280,7 +288,7 @@ namespace Labirint
             }
         }
         //pomocna funkcija za slobodno kretanje
-        private void again()
+        private void again( int i)
         {
             dragging = false;
             int pomocni_x = 0, pomocni_y;
@@ -289,7 +297,7 @@ namespace Labirint
                 pomocni_y = 0;
                 for (int l = 0; l < 20; l++)
                 {
-                    if (mazeCells[k, l] == 1 && (k != 0 || l != 0))
+                    if (mazeCells[k, l] == i && (k != 0 || l != 0))
                     {
                         Rectangle rect = new Rectangle(pomocni_x, pomocni_y, 25, 25);
                         lab.FillRectangle(Brushes.Ivory, rect);
@@ -304,7 +312,8 @@ namespace Labirint
         {
             int i, j;
             int boxXstart=0, boxXend=0, boxYstart, boxYend;
-            if (dragging && mouseDownPoint.X>0 && mouseDownPoint.X<rWidth && mouseDownPoint.Y>0 && mouseDownPoint.Y<rHeight)
+            if (dragging && mouseDownPoint.X>0 && mouseDownPoint.X<rWidth && 
+                mouseDownPoint.Y>0 && mouseDownPoint.Y<rHeight)
             {
                 for (i = 0; i < 20; i++)
                 {
@@ -317,19 +326,35 @@ namespace Labirint
                         {
                             boxYstart = boxYend;
                             boxYend += rHeight;
-                            if (mazeCells[i, j] == 1 && boxXstart < e.X && boxXend > e.X && boxYstart < e.Y && boxYend > e.Y)
+                        if (e.X >= finishX && e.Y >= finishY)
+                        {
+                            MessageBox.Show("Bravo! Završio si labirint." +
+                                " bodovi: " + Bodovanje.broj_bodova.ToString());
+                        }
+                        if (mazeCells[i, j] == 1 || mazeCells[i, j] == 3 && boxXstart < e.X && 
+                            boxXend > e.X && boxYstart < e.Y && boxYend > e.Y)
                             {
+                                
+                                if (mazeCells[i, j] == 3)
+                                {
+                                    Bodovanje.skupljenPlijen();
+                                    mazeCells[i, j] = 1;
+                                    Rectangle rect = new Rectangle(boxXstart, boxYstart, 25, 25);
+                                    lab.FillRectangle(Brushes.Ivory, rect);                                   
+                                }
                                 mouseStart = mouseEnd;
                                 mouseEnd = new Point(e.X, e.Y);
 
                                 lab.DrawLine(pen, mouseStart, mouseEnd);
 
                                 this.Invalidate();
+                                
 
                             }
-                            else if (mazeCells[i, j] == 0 && boxXstart <= e.X && boxXend >= e.X && boxYstart <= e.Y && boxYend >= e.Y)
+                            else if (mazeCells[i, j] == 0 && boxXstart <= e.X && 
+                            boxXend >= e.X && boxYstart <= e.Y && boxYend >= e.Y)
                             {
-                                again(); 
+                                again(1); 
                             }
                             
                         }
@@ -338,7 +363,7 @@ namespace Labirint
             }  
             else if(dragging == false)
             {
-                again();
+                again(1);
             }          
         }
         //kretanje pomocu misa
@@ -355,9 +380,10 @@ namespace Labirint
                         mazeCells[mazeX, mazeY] = 1;
                         mazeX--;
                     }
-                    else if (mazeCells[mazeX - 1, mazeY] == 1)
+                    else if (mazeCells[mazeX - 1, mazeY] == 1 || mazeCells[mazeX - 1, mazeY] == 3)
                     {
                         x -= 25;
+                        if (mazeCells[mazeX - 1, mazeY] == 3) Bodovanje.skupljenPlijen();
                         mazeX--;
                         mazeCells[mazeX, mazeY] = 2;
                     }
@@ -371,10 +397,13 @@ namespace Labirint
                         mazeCells[mazeX, mazeY] = 1;
                         mazeX++;
                     }
-                    else if (mazeCells[mazeX + 1, mazeY] == 1)
+                    else if (mazeCells[mazeX + 1, mazeY] == 1 || mazeCells[mazeX + 1, mazeY] == 3)
                     {
                         x += 25;
+                        if (mazeCells[mazeX + 1, mazeY] == 3) Bodovanje.skupljenPlijen();
                         mazeX++;
+                        if (e.X >= finishX && e.Y >= finishY) MessageBox.Show("Bravo! Završio si labirint." +
+                            " bodovi: " + Bodovanje.broj_bodova.ToString());
                         mazeCells[mazeX, mazeY] = 2;
                     }
                 }
@@ -387,14 +416,15 @@ namespace Labirint
                         mazeCells[mazeX, mazeY] = 1;
                         mazeY--;
                     }
-                    else if (mazeCells[mazeX, mazeY - 1] == 1)
+                    else if (mazeCells[mazeX, mazeY - 1] == 1 || mazeCells[mazeX, mazeY - 1] == 3)
                     {
                         y -= 25;
+                        if (mazeCells[mazeX, mazeY - 1] == 3) Bodovanje.skupljenPlijen();
                         mazeY--;
                         mazeCells[mazeX, mazeY] = 2;
                     }
                 }
-                else if (e.Y - mouseDownPoint.Y >= y + 20 && e.Y > y + 25 && mazeY + 1 <= 19)
+                else if (e.Y - mouseDownPoint.Y >= y - 20 && e.Y >= y + 25 && mazeY + 1 <= 19)
                 {
                     if (mazeCells[mazeX, mazeY + 1] == 2)
                     {
@@ -403,10 +433,13 @@ namespace Labirint
                         mazeCells[mazeX, mazeY] = 1;
                         mazeY++;
                     }
-                    else if (mazeCells[mazeX, mazeY + 1] == 1)
+                    else if (mazeCells[mazeX, mazeY + 1] == 1 || mazeCells[mazeX, mazeY + 1] == 3)
                     {
                         y += 25;
+                        if (mazeCells[mazeX, mazeY + 1] == 3) Bodovanje.skupljenPlijen();
                         mazeY++;
+                        if (e.X >= finishX && e.Y >= finishY) MessageBox.Show("Bravo! Završio si labirint." +
+                            " bodovi: " + Bodovanje.broj_bodova.ToString());
                         mazeCells[mazeX, mazeY] = 2;
                     }
                 }
@@ -420,9 +453,10 @@ namespace Labirint
 
 
         private void FormLevel_Paint(object sender, PaintEventArgs e)
-        {
+        {            
             if (paint)
             {
+                
                 foreach (Plijen p in Plijen.sviPlijenovi)
                 {
 
@@ -443,14 +477,14 @@ namespace Labirint
                         nacrtanPlijen.FillRectangle(Brush2, Plijen.sviPlijenovi[i + 1].pravokutnik);
                         nacrtanPlijen.FillRectangle(Brush3, Plijen.sviPlijenovi[i + 2].pravokutnik);
 
-
                     }
                 }
 
             }
             else {
+                
 
-                foreach (Plijen p in Plijen.sviPlijenovi)
+                /*foreach (Plijen p in Plijen.sviPlijenovi)
                 {
 
                     Color Color1 = Color.White;
@@ -459,6 +493,7 @@ namespace Labirint
                     nacrtanPlijen = Graphics.FromImage(pictureBox1.Image);
 
                     for (int i = 0; i < 20; i++)
+                        
                     {
 
                         Brush Brush1 = new SolidBrush(Color1);
@@ -470,8 +505,8 @@ namespace Labirint
 
                     }
                 }
-                Plijen.sviPlijenovi.Clear();
-              
+                Plijen.sviPlijenovi.Clear();*/
+                
             
             }
                 
@@ -503,13 +538,37 @@ namespace Labirint
             
            
              //MessageBox.Show("Maknuli smo plijenove jer nisi na vrijeme ih pokupio!");
-             paint = false;
              
-             MyTimer1.Stop();
-          
-             //else dodajPlijenove() , generiranje novih
+            
+             
+            MyTimer1.Stop();
+            paint = false;
 
-             this.Invalidate();
+            if (paint == false)
+            {
+                int cellX = 0;
+                int cellY;
+                for (int i = 0; i < 20; i++)
+                {
+                    cellY = 0;
+                    for (int j = 0; j < 20; j++)
+                    {
+                        if (mazeCells[i, j] == 3)
+                        {
+                            Rectangle rect = new Rectangle(cellX, cellY, 25, 25);
+                            lab.FillRectangle(Brushes.Ivory, rect);
+                        }
+                        cellY += rHeight;
+                    }
+                    cellX += rWidth;
+                }
+                Plijen.sviPlijenovi.Clear();
+            }
+        
+            //else dodajPlijenove() , generiranje novih
+
+            this.Invalidate();
+            
            
 
         }
