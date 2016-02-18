@@ -27,13 +27,18 @@ namespace Labirint
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (radioButton1.Checked) //Level 1
-            {
-                bool useMouse = radioButton5.Checked ? true : false;
-                bool useMouse_free = radioButton7.Checked ? true : false;
-                FormLevel L1 = new FormLevel(useMouse, useMouse_free);
-                L1.Show();
-            }
+            int level;
+            if (radioButton1.Checked)
+                level = 1;
+            else if (radioButton2.Checked)
+                level = 2;
+            else //radioButton3.Checked
+                level = 3;
+
+            bool useMouse = radioButton5.Checked ? true : false;
+            bool useMouse_free = radioButton7.Checked ? true : false;
+            FormLevel L1 = new FormLevel(useMouse, useMouse_free, level);
+            L1.Show();
         }
     }
 }

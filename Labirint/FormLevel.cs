@@ -19,9 +19,11 @@ namespace Labirint
         private int y;
 
         static System.Windows.Forms.Timer MyTimer1 = new System.Windows.Forms.Timer();
+        static System.Windows.Forms.Timer level3Timer = new System.Windows.Forms.Timer();
         
         bool useM;
         bool useM_free;
+        int mazeLevel;
         private Point mouseStart;
         private Point mouseEnd;
         Pen pen = new Pen(Color.FromArgb(255, 0, 255, 0), 5);
@@ -34,10 +36,12 @@ namespace Labirint
         Graphics lab;
         Graphics nacrtanPlijen;
 
-        public FormLevel(bool useMouse, bool useMouse_free)
+        public FormLevel(bool useMouse, bool useMouse_free, int level)
         {
             useM = useMouse;
             useM_free = useMouse_free;
+            mazeLevel = level;
+
             InitializeComponent();
 
             x = 0;
@@ -102,56 +106,65 @@ namespace Labirint
             finish.Height = rHeight;
             finish.Width = 2 * rWidth;
 
-            //finish.MouseHover += new EventHandler(finish_MouseHover);
-
-
-            //stvori(generiraj) plijenove
-
-            for (int k = 0; k < 20; k++)
+            if (mazeLevel == 2 || mazeLevel == 3)
             {
-                for (int i = 100; i < mazeWidth ; )
+                //stvori(generiraj) plijenove
+
+                for (int k = 0; k < 20; k++)
                 {
-                    for (int j = 100; j < mazeHeight ; )
+                    for (int i = 100; i < mazeWidth;)
                     {
-                        if (mazeCells[i / rWidth, j / rHeight] == 1)
+                        for (int j = 100; j < mazeHeight;)
                         {
-                            Plijen.sviPlijenovi.Add(new Plijen(i, j, 25, 25));
-                            mazeCells[i / rWidth, j / rHeight] = 3;
+                            if (mazeCells[i / rWidth, j / rHeight] == 1)
+                            {
+                                Plijen.sviPlijenovi.Add(new Plijen(i, j, 25, 25));
+                                mazeCells[i / rWidth, j / rHeight] = 3;
+                            }
+
+                            j += rHeight * 5;
                         }
 
-                        j += rHeight*5;
+                        i += rWidth * 5;
+
+
                     }
-
-                    i += rWidth*5;
-
-
                 }
+
+
+                MyTimer1.Interval = 20000;
+                MyTimer1.Tick += new EventHandler(timer2_Tick);
+                MyTimer1.Enabled = true;
+
+                MyTimer1.Start();
+                int bodoviTick = 0;
+                Stopwatch stopWatch = new Stopwatch();
+                stopWatch.Start();
+
+                bodoviTick++;
+                stopWatch.Stop();
+
+                TimeSpan ts = stopWatch.Elapsed;
             }
 
-
-            MyTimer1.Interval = 20000;
-            MyTimer1.Tick += new EventHandler(timer2_Tick);
-            MyTimer1.Enabled = true;
-          
-            MyTimer1.Start();
-            int bodoviTick = 0;
-            Stopwatch stopWatch = new Stopwatch();
-            stopWatch.Start();
-            
-            bodoviTick++; 
-            stopWatch.Stop();
-           
-            TimeSpan ts = stopWatch.Elapsed;
-          
+            if (mazeLevel == 3)
+            {
+                level3Timer.Interval = 50000;
+                level3Timer.Tick += new EventHandler(level3Timer_Tick);
+                level3Timer.Enabled = true;
+                level3Timer.Start();
+            }
        
             pictureBox1.Invalidate();
              
         }
 
-        /*private void finish_MouseHover(object sender, EventArgs e)
+        private void level3Timer_Tick(object sender, EventArgs e)
         {
-            MessageBox.Show("Kraj");
-        }*/
+            level3Timer.Stop();
+            DialogResult r = MessageBox.Show("Igra je gotova! Nisi završio u zadanom vremenu.");
+            Close();
+        }
 
         public void drawPoint(object sender, EventArgs e) {
 
@@ -216,8 +229,15 @@ namespace Labirint
                         x += 25;
                         if (mazeCells[mazeX + 1, mazeY] == 3) Bodovanje.skupljenPlijen();
                         mazeX++;
-                        if (mazeX == 18 && mazeY == 18) MessageBox.Show("Bravo! Završio si labirint." + 
+                        if (mazeX == 18 && mazeY == 18)
+                        {
+                            DialogResult result = MessageBox.Show("Bravo! Završio si labirint." +
                              " bodovi: " + Bodovanje.broj_bodova.ToString());
+                            if (result == DialogResult.OK)
+                            {
+                                Close();
+                            }
+                        }
                         mazeCells[mazeX, mazeY] = 2;
                     }
                 }
@@ -252,8 +272,15 @@ namespace Labirint
                         y += 25;
                         if (mazeCells[mazeX, mazeY + 1] == 3) Bodovanje.skupljenPlijen();
                         mazeY++;
-                        if (mazeX == 18 && mazeY == 18) MessageBox.Show("Bravo! Završio si labirint." + 
-                            " bodovi: " + Bodovanje.broj_bodova.ToString());
+                        if (mazeX == 18 && mazeY == 18)
+                        {
+                            DialogResult result = MessageBox.Show("Bravo! Završio si labirint." +
+                             " bodovi: " + Bodovanje.broj_bodova.ToString());
+                            if (result == DialogResult.OK)
+                            {
+                                Close();
+                            }
+                        }
                         mazeCells[mazeX, mazeY] = 2;
                     }
                 }
@@ -328,8 +355,12 @@ namespace Labirint
                             boxYend += rHeight;
                         if (e.X >= finishX && e.Y >= finishY)
                         {
-                            MessageBox.Show("Bravo! Završio si labirint." +
-                                " bodovi: " + Bodovanje.broj_bodova.ToString());
+                            DialogResult result = MessageBox.Show("Bravo! Završio si labirint." +
+                             " bodovi: " + Bodovanje.broj_bodova.ToString());
+                            if (result == DialogResult.OK)
+                            {
+                                Close();
+                            }
                         }
                         if (mazeCells[i, j] == 1 || mazeCells[i, j] == 3 && boxXstart < e.X && 
                             boxXend > e.X && boxYstart < e.Y && boxYend > e.Y)
@@ -402,8 +433,15 @@ namespace Labirint
                         x += 25;
                         if (mazeCells[mazeX + 1, mazeY] == 3) Bodovanje.skupljenPlijen();
                         mazeX++;
-                        if (e.X >= finishX && e.Y >= finishY) MessageBox.Show("Bravo! Završio si labirint." +
-                            " bodovi: " + Bodovanje.broj_bodova.ToString());
+                        if (e.X >= finishX && e.Y >= finishY)
+                        {
+                            DialogResult result = MessageBox.Show("Bravo! Završio si labirint." +
+                             " bodovi: " + Bodovanje.broj_bodova.ToString());
+                            if (result == DialogResult.OK)
+                            {
+                                Close();
+                            }
+                        }
                         mazeCells[mazeX, mazeY] = 2;
                     }
                 }
@@ -438,8 +476,15 @@ namespace Labirint
                         y += 25;
                         if (mazeCells[mazeX, mazeY + 1] == 3) Bodovanje.skupljenPlijen();
                         mazeY++;
-                        if (e.X >= finishX && e.Y >= finishY) MessageBox.Show("Bravo! Završio si labirint." +
-                            " bodovi: " + Bodovanje.broj_bodova.ToString());
+                        if (e.X >= finishX && e.Y >= finishY)
+                        {
+                            DialogResult result = MessageBox.Show("Bravo! Završio si labirint." +
+                             " bodovi: " + Bodovanje.broj_bodova.ToString());
+                            if (result == DialogResult.OK)
+                            {
+                                Close();
+                            }
+                        }
                         mazeCells[mazeX, mazeY] = 2;
                     }
                 }
