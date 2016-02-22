@@ -488,28 +488,28 @@ namespace Labirint
         {            
             if (paint)
             {
-                
+
+                Random r = new Random();
+
+                Color Color1 = Color.Crimson;
+                Color Color2 = Color.Yellow;
+                Color Color3 = Color.Blue;
+
+                Brush Brush1 = new SolidBrush(Color1);
+                Brush Brush2 = new SolidBrush(Color2);
+                Brush Brush3 = new SolidBrush(Color3);
+                List<Brush> brushes = new List<Brush>();
+                brushes.Add(Brush1);
+                brushes.Add(Brush2);
+                brushes.Add(Brush3);
+
                 foreach (Plijen p in Plijen.sviPlijenovi)
                 {
-
-                    Color Color1 = Color.Crimson;
-                    Color Color2 = Color.Yellow;
-                    Color Color3 = Color.Blue;
-
                     nacrtanPlijen = Graphics.FromImage(pictureBox1.Image);
 
-                    for (int i = 0; i < 20; i++)
-                    {
+                    int b = r.Next(0, 3);
 
-                        Brush Brush1 = new SolidBrush(Color1);
-                        Brush Brush2 = new SolidBrush(Color2);
-                        Brush Brush3 = new SolidBrush(Color3);
-
-                        nacrtanPlijen.FillRectangle(Brush1, Plijen.sviPlijenovi[i].pravokutnik);
-                        nacrtanPlijen.FillRectangle(Brush2, Plijen.sviPlijenovi[i + 1].pravokutnik);
-                        nacrtanPlijen.FillRectangle(Brush3, Plijen.sviPlijenovi[i + 2].pravokutnik);
-
-                    }
+                    nacrtanPlijen.FillRectangle(brushes[b], p.pravokutnik);
                 }
 
             }
