@@ -29,51 +29,7 @@ namespace Labirint
             this.y = yos;
 
             pravokutnik = new Rectangle(x,y, sirinaPlijena, visinaPlijena);
-           // pauseTimer.Elapsed -= pauseTimer_Elapsed;
-           // pauseTimer.Elapsed+= pauseTimer_Elapsed;
-            
-        }
-
-        /*
-        void pauseTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            paused = false;
-            pauseTimer.Enabled = false;
-        }
-        
-        public void pauzirajTimer()
-        {
            
-            pauseTimer.Enabled = true;
-        
-        }
-        public void promijeniMjesto(int[,] mazeCells, int mazeWidth, int mazeHeight)
-        {
-           
-
-                for (int i = 0; i < mazeWidth; )
-                {
-                    for (int j = 0; j < mazeHeight; )
-                    {
-                        if (mazeCells[i / 25, j / 25] == 0)
-                        {
-                           this.pravokutnik = new Rectangle(i,j, sirinaPlijena, visinaPlijena);
-                        }
-
-                        j += 25 * 5;
-                    }
-
-                    i += 25 * 5;
-
-
-                }
-
-
-                
-        }*/
-
-       
-
-
+        }       
     }
 }

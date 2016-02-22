@@ -20,7 +20,9 @@ namespace Labirint
 
         static System.Windows.Forms.Timer MyTimer1 = new System.Windows.Forms.Timer();
         static System.Windows.Forms.Timer level3Timer = new System.Windows.Forms.Timer();
-        
+        static System.Windows.Forms.Timer timer;
+        int time;
+
         bool useM;
         bool useM_free;
         int mazeLevel;
@@ -32,6 +34,7 @@ namespace Labirint
         bool paint = true; 
 
         Point mouseDownPoint;
+        int end = 0;
 
         Graphics lab;
         Graphics nacrtanPlijen;
@@ -70,6 +73,7 @@ namespace Labirint
             mazeCells = new int[mazeWidth / rWidth, mazeHeight / rHeight];
             mazeCells = labirint.generateMaze(mazeWidth, mazeHeight, rWidth, rHeight);
 
+            
             //nacrtaj labirint
             if (pictureBox1.Image == null)
             {
@@ -154,7 +158,16 @@ namespace Labirint
                 level3Timer.Enabled = true;
                 level3Timer.Start();
             }
-       
+
+            
+            //timer za bodovanje
+            timer = new System.Windows.Forms.Timer();
+            timer.Interval = 1000;
+            timer.Start();
+
+            time = 0;
+            timer.Tick += Timer_Tick;
+            
             pictureBox1.Invalidate();
              
         }
@@ -179,21 +192,12 @@ namespace Labirint
         {
             Rectangle rect = new Rectangle(x, y, 25, 25);
             lab.FillRectangle(Brushes.Ivory, rect);
-
-            /*foreach(Plijen p in Plijen.sviPlijenovi)
-                if (rect.IntersectsWith(p.pravokutnik)) {
-
-                    Rectangle r = p.pravokutnik;
-                    lab.FillRectangle(Brushes.Ivory, r);
-                    Bodovanje.skupljenPlijen(); 
-                    //MessageBox.Show("Bravo! Imaš jedan bod više!");
-                
-                }*/
-
         }
         
         private void zatvori()
         {
+            end = 1;
+            Bodovanje.brzinaKretanja(time);
             DialogResult result = MessageBox.Show("Bravo! Završio si labirint." +
                              " bodovi: " + Bodovanje.broj_bodova.ToString());
 
@@ -201,6 +205,16 @@ namespace Labirint
             {
                 Close();
             }
+        }
+
+        public void Timer_Tick(object sender, EventArgs e)
+        {            
+            if (end==1)
+            {
+                timer.Stop();
+            }
+            else
+                time++;
         }
 
         //kretanje pomocu tipkovnice
@@ -340,6 +354,7 @@ namespace Labirint
         {
             int gotovo=0;
             int i, j;
+            
             int boxXstart=0, boxXend=0, boxYstart, boxYend;
             if (dragging && mouseDownPoint.X>0 && mouseDownPoint.X<rWidth && 
                 mouseDownPoint.Y>0 && mouseDownPoint.Y<rHeight)
@@ -348,9 +363,8 @@ namespace Labirint
                 {
                         boxYstart = 0;
                         boxYend = 0;
-
                         boxXstart = boxXend;
-                        boxXend += rWidth;
+                        boxXend += rWidth;                        
                         for (j = 0; j < 20; j++)
                         {
                             if (gotovo == 0)
@@ -361,7 +375,7 @@ namespace Labirint
                                 {
                                     gotovo = 1;
                                     zatvori();
-                                }
+                                }                            
                                 else if (mazeCells[i, j] == 1 || mazeCells[i, j] == 3 && boxXstart < e.X &&
                                     boxXend > e.X && boxYstart < e.Y && boxYend > e.Y)
                                 {
@@ -386,6 +400,7 @@ namespace Labirint
                                 }
                             }                            
                         }
+                        
                 }
                 
             }  
@@ -513,66 +528,13 @@ namespace Labirint
                 }
 
             }
-            else {
-                
-
-                /*foreach (Plijen p in Plijen.sviPlijenovi)
-                {
-
-                    Color Color1 = Color.White;
-                 
-
-                    nacrtanPlijen = Graphics.FromImage(pictureBox1.Image);
-
-                    for (int i = 0; i < 20; i++)
-                        
-                    {
-
-                        Brush Brush1 = new SolidBrush(Color1);
-                    
-
-                        nacrtanPlijen.FillRectangle(Brush1, Plijen.sviPlijenovi[i].pravokutnik);
-                   
-
-
-                    }
-                }
-                Plijen.sviPlijenovi.Clear();*/
-                
-            
-            }
-                
-                pictureBox1.Invalidate();
-             
+            pictureBox1.Invalidate();             
        }
 
         
         private void timer2_Tick(object sender, EventArgs e)
         {
-            /* //premijestiti plijen
-            foreach (Plijen p in Plijen.sviPlijenovi)
-            {
-                if(p.skupljen == false)
-                    p.promijeniMjesto(mazeCells,mazeWidth,mazeHeight);
-                Plijen.sviPlijenovi.Remove(p);
-
-            }
-
-            foreach (Plijen p in Plijen.sviPlijenovi)
-            {
-                if (p.skupljen == false)
-                p.ukloni = 1;
-                Plijen.sviPlijenovi.Remove(p);
-            }*/
-
-            //ili ukloniti plijen 
-           // p.pauzirajTimer();
             
-           
-             //MessageBox.Show("Maknuli smo plijenove jer nisi na vrijeme ih pokupio!");
-             
-            
-             
             MyTimer1.Stop();
             paint = false;
 
@@ -581,21 +543,8 @@ namespace Labirint
                 again(3);
                 Plijen.sviPlijenovi.Clear();
             }
-        
-            //else dodajPlijenove() , generiranje novih
-
-            this.Invalidate();
             
-           
-
-        }
-
-        /*
-        private static void MyHandler(object e, ElapsedEventArgs args)
-        {
-            var timer = (Timer)e;
-            timer.Stop();
-        }*/
-
+            this.Invalidate();
+        }        
     }
 }
