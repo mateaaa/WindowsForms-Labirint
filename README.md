@@ -1,4 +1,4 @@
-# WindowsForms-Labirint
+# WindowsForms-Labirint (Računarski praktikum 3 kolegij)
 Aplikacija slučajno generira labirint
 
 Moguće su bar tri razine igre.
